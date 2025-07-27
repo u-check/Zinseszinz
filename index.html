@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Interaktiver Sparplan Simulator</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="index.css">
+  <script type="importmap">
+{
+  "imports": {
+    "chart.js/auto": "https://esm.sh/chart.js/auto",
+    "chart.js/": "https://esm.sh/chart.js@^4.5.0/"
+  }
+}
+</script>
+<link rel="stylesheet" href="/index.css">
+</head>
+<body>
+  <div class="app-layout">
+    <aside class="sidebar" id="controls-container">
+      <header>
+        <h1 id="main-title">Bitcoin Simulator</h1>
+      </header>
+
+      <!-- Initial Capital -->
+      <div class="control-group">
+        <label>Startkapital (€)</label>
+        <div class="toggle-group" id="start-capital-group">
+          <input type="radio" id="start-0" name="startCapital" value="0" checked>
+          <label for="start-0">0</label>
+          <input type="radio" id="start-1000" name="startCapital" value="1000">
+          <label for="start-1000">1.000</label>
+          <input type="radio" id="start-5000" name="startCapital" value="5000">
+          <label for="start-5000">5.000</label>
+          <input type="radio" id="start-10000" name="startCapital" value="10000">
+          <label for="start-10000">10.000</label>
+          <div class="custom-input-wrapper">
+            <input type="number" id="custom-start-capital" class="custom-toggle-input" data-group="startCapital" placeholder="Eigene" min="0" step="500">
+            <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+            <div class="stepper">
+              <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+              <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Monthly Investment Controls -->
+      <div class="control-group">
+        <label>Monatliche Sparrate (€)</label>
+        <div class="toggle-group" id="monthly-rate-group">
+          <input type="radio" id="rate-100" name="monthlyRate" value="100">
+          <label for="rate-100">100</label>
+          <input type="radio" id="rate-200" name="monthlyRate" value="200">
+          <label for="rate-200">200</label>
+          <input type="radio" id="rate-500" name="monthlyRate" value="500" checked>
+          <label for="rate-500">500</label>
+          <input type="radio" id="rate-1000" name="monthlyRate" value="1000">
+          <label for="rate-1000">1000</label>
+          <div class="custom-input-wrapper">
+            <input type="number" id="custom-monthly-rate" class="custom-toggle-input" data-group="monthlyRate" placeholder="Eigene" min="1" step="100">
+            <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+            <div class="stepper">
+              <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+              <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Contribution Period -->
+      <div class="control-group">
+        <label>Einzahldauer (Jahre)</label>
+        <div class="toggle-group" id="contribution-period-group">
+          <input type="radio" id="contrib-period-5" name="contributionPeriod" value="5">
+          <label for="contrib-period-5">5</label>
+          <input type="radio" id="contrib-period-10" name="contributionPeriod" value="10" checked>
+          <label for="contrib-period-10">10</label>
+          <input type="radio" id="contrib-period-15" name="contributionPeriod" value="15">
+          <label for="contrib-period-15">15</label>
+          <input type="radio" id="contrib-period-20" name="contributionPeriod" value="20">
+          <label for="contrib-period-20">20</label>
+          <div class="custom-input-wrapper">
+            <input type="number" id="custom-contribution-period" class="custom-toggle-input" data-group="contributionPeriod" placeholder="Eigene" min="1" step="1">
+            <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+            <div class="stepper">
+              <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+              <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Price Increase Controls -->
+      <div class="control-group">
+        <label>Ø Jährl. Preissteigerung (%)</label>
+        <p class="control-group-subtitle">Mehrfachauswahl möglich</p>
+        <div class="toggle-group" id="return-rate-group">
+            <input type="checkbox" id="return-5" value="5">
+            <label for="return-5">5%</label>
+            <input type="checkbox" id="return-10" value="10">
+            <label for="return-10">10%</label>
+            <input type="checkbox" id="return-15" value="15" checked>
+            <label for="return-15">15%</label>
+            <input type="checkbox" id="return-20" value="20">
+            <label for="return-20">20%</label>
+            <div class="custom-input-wrapper">
+              <input type="number" id="custom-return-rate" class="custom-toggle-input" placeholder="Eigene %" min="0" step="1">
+              <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+              <div class="stepper">
+                <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+                <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+              </div>
+            </div>
+        </div>
+      </div>
+      
+       <!-- Withdrawal Start Year Controls -->
+       <div class="control-group">
+        <label>Auszahlung ab Jahr</label>
+        <div class="toggle-group" id="withdrawal-start-group">
+          <input type="radio" id="withdraw-start-0" name="withdrawalStart" value="0" checked>
+          <label for="withdraw-start-0">Nie</label>
+          <input type="radio" id="withdraw-start-10" name="withdrawalStart" value="10">
+          <label for="withdraw-start-10">10</label>
+          <input type="radio" id="withdraw-start-15" name="withdrawalStart" value="15">
+          <label for="withdraw-start-15">15</label>
+          <input type="radio" id="withdraw-start-20" name="withdrawalStart" value="20">
+          <label for="withdraw-start-20">20</label>
+          <div class="custom-input-wrapper">
+            <input type="number" id="custom-withdrawal-start" class="custom-toggle-input" data-group="withdrawalStart" placeholder="Eigene" min="1" step="1">
+            <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+            <div class="stepper">
+              <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+              <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+       <!-- Withdrawal Amount Controls -->
+       <div class="control-group" id="withdrawal-amount-control-group">
+        <label>Monatlicher Auszahlungsbetrag (€)</label>
+        <div class="toggle-group" id="withdrawal-amount-group">
+          <input type="radio" id="withdraw-500" name="withdrawalAmount" value="500">
+          <label for="withdraw-500">500</label>
+          <input type="radio" id="withdraw-1000" name="withdrawalAmount" value="1000">
+          <label for="withdraw-1000">1.000</label>
+          <input type="radio" id="withdraw-1500" name="withdrawalAmount" value="1500" checked>
+          <label for="withdraw-1500">1.500</label>
+          <input type="radio" id="withdraw-2000" name="withdrawalAmount" value="2000">
+          <label for="withdraw-2000">2.000</label>
+          <div class="custom-input-wrapper">
+            <input type="number" id="custom-withdrawal-amount" class="custom-toggle-input" data-group="withdrawalAmount" placeholder="Eigene" min="0" step="100">
+            <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+            <div class="stepper">
+              <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+              <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Simulation Period Controls -->
+      <div class="control-group">
+        <label>Simulationsdauer (Jahre)</label>
+        <div class="toggle-group" id="period-group">
+          <input type="radio" id="period-10" name="simulationPeriod" value="10">
+          <label for="period-10">10</label>
+          <input type="radio" id="period-20" name="simulationPeriod" value="20" checked>
+          <label for="period-20">20</label>
+          <input type="radio" id="period-30" name="simulationPeriod" value="30">
+          <label for="period-30">30</label>
+          <input type="radio" id="period-40" name="simulationPeriod" value="40">
+          <label for="period-40">40</label>
+          <div class="custom-input-wrapper">
+            <input type="number" id="custom-simulation-period" class="custom-toggle-input" data-group="simulationPeriod" placeholder="Eigene" min="1" step="1">
+            <button type="button" class="clear-btn" aria-label="Feld leeren">×</button>
+            <div class="stepper">
+              <button type="button" class="stepper-btn up" aria-label="Wert erhöhen"></button>
+              <button type="button" class="stepper-btn down" aria-label="Wert verringern"></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Global Settings -->
+      <div class="global-settings">
+        <div class="control-group row-layout">
+          <label for="use-age-toggle">Alter verwenden</label>
+          <label class="switch">
+            <input type="checkbox" id="use-age-toggle">
+            <span class="slider"></span>
+          </label>
+        </div>
+        <div class="control-group disabled-group" id="age-input-group">
+          <label for="current-age-input">Aktuelles Alter</label>
+          <div class="single-input-wrapper">
+            <input type="number" id="current-age-input" value="26" min="1" disabled>
+          </div>
+        </div>
+        <div class="control-group row-layout">
+            <label for="bitcoin-toggle">Bitcoin-Bezug</label>
+            <label class="switch">
+              <input type="checkbox" id="bitcoin-toggle" checked>
+              <span class="slider"></span>
+            </label>
+        </div>
+      </div>
+      
+      <div class="sidebar-footer">
+        <div id="quote-container" class="quote-container">
+          <p class="quote-text"></p>
+          <p class="quote-author"></p>
+          <span class="quote-arrow">→</span>
+        </div>
+      </div>
+
+    </aside>
+    <main class="main-content">
+        <div class="output-container card" id="chart-container-wrapper">
+            <h2>Visuelle Entwicklung</h2>
+            <div class="chart-container">
+                <canvas id="investment-chart"></canvas>
+            </div>
+        </div>
+
+        <div class="output-container card hidden" id="summary-card">
+          <h2>Zusammenfassung</h2>
+          <div id="summary-content">
+            <!-- Dynamically generated content -->
+          </div>
+        </div>
+        
+        <div class="output-container card" id="table-container-wrapper">
+            <h2 id="table-title">Wertentwicklung pro Jahr</h2>
+            <div id="table-container"></div>
+        </div>
+    </main>
+  </div>
+
+  <script type="module" src="index.js" defer></script>
+<script type="module" src="/index.tsx"></script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Interaktiver Sparplan Simulator",
+  "description": "Ein interaktiver Rechner zur Simulation von Sparplänen mit verschiedenen Renditen und Auszahlungsstrategien.",
+  "requestFramePermissions": [],
+  "prompt": ""
+}
